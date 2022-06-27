@@ -1,0 +1,25 @@
+{extends file='../template.html'}
+{block name=head_especifico}
+<link href="/css/{$tema_template}/pagina_inicial.css" type="text/css" rel="stylesheet"/>
+<title>Página Inicial</title>
+{/block}
+{block name=tronco}
+<h2 id="h2_titulo_pagina_inicial">
+  <span>Página Inicial</span>
+</h2>
+<div id="div_instrucoes_do_sistema">
+  <p>
+    Selecione qual slide deseja ver o resultado pelo menu do cabeçalho do sistema.
+    Este sistema demonstra o resultado de três formas de fazer slide:
+  </p>
+  <p>
+    No primeiro link, <a href="./slide_javascript_puro">JavaScript</a>, o sistema mostra o resultado do slide feito apenas com JavaScript, sem o uso de quaisquer frameworks para JavaScript. Por isso chamei de JavaScript puro.
+  </p>
+  <p>
+    No segundo link, <a href="./slide_jquery">JQuery</a>, o sistema mostra o resultado do slide feito com JQuery. (Será implementado em breve).
+  </p>
+  <p>
+    No terceiro link, <a href="./slide_react">React</a>, o sistema mostra o resultado do slide feito com React. (Será implementado em breve).
+  </p>
+</div>
+{/block}

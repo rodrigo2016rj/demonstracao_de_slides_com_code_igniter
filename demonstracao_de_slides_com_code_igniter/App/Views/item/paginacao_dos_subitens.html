@@ -1,0 +1,29 @@
+<a class="primeira_pagina" href="/item?id={$item['id']}&amp;pagina=1">Primeira</a>
+{if $pagina_atual_dos_subitens > 1}
+  <a class="pagina_anterior" href="/item?id={$item['id']}&amp;pagina={$pagina_atual_dos_subitens - 1}">Anterior</a>
+{else}
+  <a class="pagina_anterior" href="/item?id={$item['id']}&amp;pagina=1">Anterior</a>
+{/if}
+{for $pagina_dos_subitens=1 to $ultima_pagina_dos_subitens}
+  {if $pagina_dos_subitens < $pagina_atual_dos_subitens - 3}
+    {continue}
+  {/if}
+  {if $pagina_dos_subitens != 1 and $pagina_dos_subitens == $pagina_atual_dos_subitens - 3}
+    <span>...</span>
+  {/if}
+  {if $pagina_dos_subitens > $pagina_atual_dos_subitens + 3}
+    <span>...</span>
+    {break}
+  {/if}
+  {if $pagina_dos_subitens == $pagina_atual_dos_subitens}
+    <a class="pagina_selecionada" href="/item?id={$item['id']}&amp;pagina={$pagina_dos_subitens}">{$pagina_dos_subitens}</a>
+  {else}
+    <a class="pagina" href="/item?id={$item['id']}&amp;pagina={$pagina_dos_subitens}">{$pagina_dos_subitens}</a>
+  {/if}
+{/for}
+{if $pagina_atual_dos_subitens < $ultima_pagina_dos_subitens}
+  <a class="pagina_seguinte" href="/item?id={$item['id']}&amp;pagina={$pagina_atual_dos_subitens + 1}">Seguinte</a>
+{else}
+  <a class="pagina_seguinte" href="/item?id={$item['id']}&amp;pagina={$ultima_pagina_dos_subitens}">Seguinte</a>
+{/if}
+<a class="ultima_pagina" href="/item?id={$item['id']}&amp;pagina={$ultima_pagina_dos_subitens}">Última</a>

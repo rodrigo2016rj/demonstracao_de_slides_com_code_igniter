@@ -1,0 +1,49 @@
+{extends file='../template.html'}
+{block name=head_especifico}
+<link href="/css/{$tema_template}/item.css" type="text/css" rel="stylesheet"/>
+<title>Item</title>
+{/block}
+{block name=tronco}
+{if $mensagem_da_pagina !== ''}
+<div id="div_mensagem">
+  <span id="span_mensagem">{$mensagem_da_pagina}</span>
+</div>
+{/if}
+{if $item['id'] !== ''}
+<div id="div_informacoes_do_item">
+  <h2 id="h2_titulo_do_item">
+    <span>{$item['titulo']}</span>
+  </h2>
+  <div id="div_local_da_descricao_do_item">
+    <div id="div_descricao_do_item">{$item['descricao']}</div>
+  </div>
+  <div id="div_lista_de_subitens">
+    <h3 id="h3_titulo_da_lista_de_subitens">
+      <span>Alguns exemplos:</span>
+    </h3>
+    {if $pagina_atual_dos_subitens}
+    <div id="div_paginacao_de_cima_dos_subitens">
+      {include file='item/paginacao_dos_subitens.html'}
+    </div>
+    {/if}
+    <div id="div_subitens">
+      {foreach $subitens as $subitem}
+      <a class="link_subitem" href="/subitem?id={$subitem['id']}">
+        <h4 class="titulo_do_subitem">
+          <span>{$subitem['titulo']}</span>
+        </h4>
+        <div class="local_da_descricao_do_subitem">
+          <div class="descricao_do_subitem">{$subitem['descricao']}</div>
+        </div>
+      </a>
+      {/foreach}
+    </div>
+    {if $pagina_atual_dos_subitens}
+    <div id="div_paginacao_de_baixo_dos_subitens">
+      {include file='item/paginacao_dos_subitens.html'}
+    </div>
+    {/if}
+  </div>
+</div>
+{/if}
+{/block}

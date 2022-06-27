@@ -1,0 +1,22 @@
+{extends file='../template.html'}
+{block name=head_especifico}
+<link href="/css/{$tema_template}/subitem.css" type="text/css" rel="stylesheet"/>
+<title>Subitem</title>
+{/block}
+{block name=tronco}
+{if $mensagem_da_pagina !== ''}
+<div id="div_mensagem">
+  <span id="span_mensagem">{$mensagem_da_pagina}</span>
+</div>
+{/if}
+{if $subitem['id'] !== ''}
+<div id="div_informacoes_do_subitem">
+  <h2 id="h2_titulo_do_subitem">
+    <span>{$subitem['titulo']}</span>
+  </h2>
+  <div id="div_local_da_descricao_do_subitem">
+    <div id="div_descricao_do_subitem">{$subitem['descricao']}</div>
+  </div>
+</div>
+{/if}
+{/block}

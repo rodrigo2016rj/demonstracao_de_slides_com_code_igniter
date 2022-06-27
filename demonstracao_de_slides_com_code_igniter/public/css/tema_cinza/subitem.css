@@ -1,0 +1,59 @@
+#div_mensagem{
+  margin-top: 20px;
+  margin-right: auto;
+  margin-left: auto;
+  min-width: 700px;
+  max-width: 700px;
+  text-align: center;
+}
+@media only screen and (max-device-width: 640px){
+  #div_mensagem{
+    padding: 0px 8px;
+    min-width: calc(100% - 16px);
+    max-width: calc(100% - 16px);
+    text-align: left;
+  }
+}
+#span_mensagem{
+  color: #585858;
+  font-size: 12pt;
+}
+
+/* Informações do subitem */
+#div_informacoes_do_subitem{
+  margin-right: auto;
+  margin-left: auto;
+  width: 600px;
+  max-width: 100%;
+}
+#h2_titulo_do_subitem{
+  padding-top: 20px;
+  color: #404040;
+  font-size: 26pt;
+  text-align: center;
+}
+@media only screen and (max-device-width: 640px){
+  #h2_titulo_do_subitem{
+    padding-top: 0px;
+    font-size: 18pt;
+  }
+}
+#div_local_da_descricao_do_subitem{
+  margin-top: 30px;
+}
+@media only screen and (max-device-width: 640px){
+  #div_local_da_descricao_do_subitem{
+    margin-top: 14px;
+  }
+}
+#div_descricao_do_subitem{
+  line-height: 22px;
+  color: #282828;
+  font-size: 12pt;
+  text-indent: 70px;
+}
+@media only screen and (max-device-width: 640px){
+  #div_descricao_do_subitem{
+    text-indent: 35px;
+  }
+}

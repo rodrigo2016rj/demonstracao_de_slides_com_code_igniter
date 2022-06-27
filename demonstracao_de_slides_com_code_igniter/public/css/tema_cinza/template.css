@@ -1,0 +1,97 @@
+body{
+  margin: 0px;
+  background: #FFF;
+  color: #303030;
+  font-family: Verdana, Tahoma, Times New Roman, serif;
+  font-size: 12pt;
+}
+
+/* Cabeçalho e menus do sistema: */
+#h1_titulo_do_sistema_template{
+  padding-top: 16px;
+  padding-bottom: 17px;
+  background-color: #484848;
+  text-align: center;
+}
+#h1_titulo_do_sistema_template>span{
+  color: #FFF;
+}
+#nav_menu_01_template{
+  border-bottom: 1px solid #808080;
+  min-width: 100%;
+  max-width: 100%;
+  background-color: #E8E8E8;
+  text-align: center;
+}
+.opcao_do_menu_01,
+.opcao_do_menu_01:visited{
+  display: inline-block;
+  padding: 16px;
+  vertical-align: top;
+  color: #404080;
+  font-size: 12pt;
+  letter-spacing: 1px;
+  text-shadow: 1px 0px 0px #404080;
+}
+.opcao_do_menu_01:hover{
+  background-color: #FFF;
+  color: #202060;
+  text-decoration: none;
+  text-shadow: 1px 0px 0px #202060;
+}
+#div_tronco_template{
+  margin-right: auto;
+  margin-left: auto;
+  padding: 20px 20px 70px 20px;
+  width: calc(1260px - 20px - 20px);
+  max-width: calc(100% - 20px - 20px);
+  min-height: 1000px; /* Será modificada pelo script */
+  background-color: #FFF;
+}
+#div_rodape_template{
+  padding-bottom: 30px;
+  background-color: #484848;
+  color: #FFF;
+  font-size: 11pt;
+}
+#div_autor_do_sistema_template{
+  padding-top: 28px;
+  padding-right: 30px;
+  padding-left: 30px;
+  text-align: center;
+}
+#div_tecnologias_do_sistema_template{
+  padding-right: 30px;
+  padding-left: 30px;
+  text-align: center;
+}
+
+/* Classes para qualquer tag: */
+.tag_oculta{
+  display: none !important;
+}
+
+/* Estilos iniciais: */
+h1, h2, h3, h4, h5, h6{
+  margin: 0px;
+  font-family: Verdana, Tahoma, Times New Roman, serif;
+  font-size: 20pt;
+  font-weight: normal;
+}
+p{
+  margin-top: 0px;
+  margin-bottom: 0px;
+  text-align: justify;
+}
+a{
+  color: #0000B0;
+  text-decoration: none;
+  cursor: pointer;
+}
+a:visited{
+  color: #0000B0;
+}
+a:hover{
+  color: #0000B0;
+  text-decoration: underline;
+}
