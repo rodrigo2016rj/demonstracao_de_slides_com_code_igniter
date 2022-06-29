@@ -1,0 +1,273 @@
+#h2_titulo_slide_jquery{
+  margin-top: 20px;
+  margin-right: auto;
+  margin-left: auto;
+  width: 900px;
+  max-width: 100%;
+  color: #707070;
+  font-size: 26pt;
+}
+@media only screen and (max-device-width: 640px){
+  #h2_titulo_slide_jquery{
+    margin-top: 0px;
+    font-size: 18pt;
+  }
+}
+
+#div_slide_mais_subitens{
+  margin-top: 45px;
+  margin-right: auto;
+  margin-left: auto;
+  width: 900px;
+  max-width: 100%;
+}
+@media only screen and (max-device-width: 640px){
+  #div_slide_mais_subitens{
+    margin-top: 20px;
+  }
+}
+
+#div_slide{
+  margin-right: auto;
+  margin-left: auto;
+  border: 1px solid #E0E0E0;
+  width: calc(100% - 2px);
+  max-width: calc(100% - 2px);
+  min-height: calc(302px - 2px);
+  max-height: calc(302px - 2px);
+}
+#div_local_da_seta_para_esquerda{
+  float: left;
+  padding: 0px 10px 0px 8px;
+  min-width: calc(38px - 10px - 8px);
+  max-width: calc(38px - 10px - 8px);
+  min-height: 300px;
+  max-height: 300px;
+  background-color: #EBEBEB;
+  cursor: pointer;
+}
+@media only screen and (max-device-width: 640px){
+  #div_local_da_seta_para_esquerda{
+    padding: 0px 4px 0px 2px;
+    min-width: calc(26px - 4px - 2px);
+    max-width: calc(26px - 4px - 2px);
+    background-color: #DFDFDF;
+  }
+}
+#div_local_da_seta_para_esquerda:hover{
+  background-color: #787878;
+}
+#div_seta_para_esquerda{
+  margin-top: 140px;
+  border-top: 10px solid transparent;
+  border-right: 20px solid #FFF;
+  border-bottom: 10px solid transparent;
+  width: 0px;
+  height: 0px;
+}
+#div_conteudo_do_slide{
+  float: left;
+  min-width: calc(100% - 38px - 38px);
+  max-width: calc(100% - 38px - 38px);
+  min-height: 300px;
+  max-height: 300px;
+  overflow: hidden;
+}
+@media only screen and (max-device-width: 640px){
+  #div_conteudo_do_slide{
+    min-width: calc(100% - 26px - 26px);
+    max-width: calc(100% - 26px - 26px);
+  }
+}
+.link_item{
+  display: block;
+  position: relative;
+  float: left;
+  padding: 25px 10px 0px 10px;
+  min-height: calc(300px - 25px);
+  max-height: calc(300px - 25px);
+  color: inherit;
+  overflow: hidden;
+}
+@media only screen and (max-device-width: 640px){
+  .link_item{
+    padding: 3px 4px 0px 4px;
+    min-height: calc(300px - 3px);
+    max-height: calc(300px - 3px);
+  }
+}
+.link_item:visited{
+  color: inherit;
+}
+.link_item:hover{
+  background-color: #F8F8F8;
+  color: inherit;
+  text-decoration: none;
+}
+.titulo_do_item{
+  color: #606060;
+  font-size: 24pt;
+}
+@media only screen and (max-device-width: 640px){
+  .titulo_do_item{
+    font-size: 16pt;
+  }
+}
+.local_da_descricao_do_item{
+  margin-top: 22px;
+  line-height: 28px;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  overflow: hidden;
+}
+@media only screen and (max-device-width: 640px){
+  .local_da_descricao_do_item{
+    margin-top: 8px;
+    line-height: 26px;
+  }
+}
+.descricao_do_item{
+  color: #6D6D6D;
+  font-size: 16pt;
+}
+@media only screen and (max-device-width: 640px){
+  .descricao_do_item{
+    max-height: 212px; /* Restringi a altura para caber juntamente com os elementos que estão dentro do .link_item. */
+    font-size: 14pt;
+    overflow: hidden;
+  }
+  .descricao_do_item>p{
+    text-align: left;
+  }
+}
+#div_local_da_seta_para_direita{
+  float: left;
+  padding: 0px 8px 0px 10px;
+  min-width: calc(38px - 8px - 10px);
+  max-width: calc(38px - 8px - 10px);
+  min-height: 300px;
+  max-height: 300px;
+  background-color: #EBEBEB;
+  cursor: pointer;
+}
+@media only screen and (max-device-width: 640px){
+  #div_local_da_seta_para_direita{
+    padding: 0px 2px 0px 4px;
+    min-width: calc(26px - 2px - 4px);
+    max-width: calc(26px - 2px - 4px);
+    background-color: #DFDFDF;
+  }
+}
+#div_local_da_seta_para_direita:hover{
+  background-color: #787878;
+}
+#div_seta_para_direita{
+  margin-top: 140px;
+  border-top: 10px solid transparent;
+  border-left: 20px solid #FFF;
+  border-bottom: 10px solid transparent;
+  width: 0px;
+  height: 0px;
+}
+#div_local_dos_botoes{
+  position: relative;
+  top: -30px;
+  left: 38px;
+  clear: left;
+  min-width: calc(100% - 38px - 38px);
+  max-width: calc(100% - 38px - 38px);
+  min-height: 30px;
+  max-height: 30px;
+  text-align: center;
+  word-spacing: 5px;
+}
+@media only screen and (max-device-width: 640px){
+  #div_local_dos_botoes{
+    left: 26px;
+    min-width: calc(100% - 26px - 26px);
+    max-width: calc(100% - 26px - 26px);
+  }
+}
+#div_parar_slide,
+#div_passar_slide{
+  display: inline-block;
+  position: relative;
+  top: 2px;
+  vertical-align: middle;
+  color: #7070B0;
+  font-size: 12pt;
+  cursor: pointer;
+}
+/* Neste caso eu preferi que o hover não afete o marcado */
+#div_parar_slide:hover,
+#div_passar_slide:hover{
+  color: #505090;
+}
+#div_parar_slide.marcado,
+#div_passar_slide.marcado{
+  color: #909090;
+  cursor: default;
+}
+.marcador_do_slide{
+  display: inline-block;
+  border: 1px solid #909090;
+  width: calc(16px - 2px);
+  height: calc(16px - 2px);
+  vertical-align: bottom;
+  background-color: #FFF;
+  cursor: pointer;
+}
+.marcador_do_slide.marcado{
+  background-color: #E0E0FF;
+}
+/* Neste caso eu preferi que o hover afete o marcado */
+.marcador_do_slide:hover{
+  background-color: #F0F0F0;
+}
+
+#div_lista_de_subitens{
+  margin-top: 40px;
+}
+@media only screen and (max-device-width: 640px){
+  #div_lista_de_subitens{
+    margin-top: 20px;
+  }
+}
+.link_subitem{
+  display: block;
+  margin-top: 25px;
+  border: 1px solid #E0E0E0;
+  padding: 2px 20px 5px 6px;
+  background-color: #FBFBFB;
+  color: inherit;
+  text-indent: 40px;
+}
+@media only screen and (max-device-width: 640px){
+  .link_subitem{
+    margin-top: 20px;
+    padding: 0px 6px 5px 6px;
+  }
+}
+.link_subitem:first-child{
+  margin-top: 0px;
+}
+.link_subitem:visited{
+  color: inherit;
+}
+.link_subitem:hover{
+  background-color: #F4F4F4;
+  color: inherit;
+  text-decoration: none;
+}
+.titulo_do_subitem{
+  color: #606060;
+  font-size: 16pt;
+}
+.local_da_descricao_do_subitem{
+  margin-top: 6px;
+  line-height: 26px;
+}
+.descricao_do_subitem{
+  color: #6D6D6D;
+  font-size: 14pt;
+}

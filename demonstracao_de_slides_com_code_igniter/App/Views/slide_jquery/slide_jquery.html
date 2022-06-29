@@ -1,0 +1,69 @@
+{extends file='../template.html'}
+{block name=head_especifico}
+<link href="/css/{$tema_template}/slide_jquery.css" type="text/css" rel="stylesheet"/>
+<script src="/script/jQuery 3.6.0 Comprimido.js"></script>
+<script src="/script/slide_jquery/controles.js"></script>
+<title>Slide JQuery</title>
+{/block}
+{block name=tronco}
+<h2 id="h2_titulo_slide_jquery">
+  <span>Slide JQuery</span>
+</h2>
+<div id="div_slide_mais_subitens">
+  <div id="div_slide">
+    <div id="div_local_da_seta_para_esquerda">
+      <div id="div_seta_para_esquerda"></div>
+    </div>
+    <div id="div_conteudo_do_slide">
+      {foreach $itens as $item}
+      {if $item['posicao_no_slide'] == 1}
+      <a class="link_item" href="/item?id={$item['id']}">
+      {else}
+      <a class="link_item tag_oculta" href="/item?id={$item['id']}">
+      {/if}
+        <span class="numero_do_item_no_slide tag_oculta">{$item['posicao_no_slide']}</span>
+        <h3 class="local_do_titulo_do_item">
+          <span class="titulo_do_item">{$item['titulo']}</span>
+        </h3>
+        <div class="local_da_descricao_do_item">
+          <div class="descricao_do_item">{$item['descricao_reduzida']}</div>
+        </div>
+      </a>
+      {/foreach}
+    </div>
+    <div id="div_local_da_seta_para_direita">
+      <div id="div_seta_para_direita"></div>
+    </div>
+    <div id="div_local_dos_botoes">
+      <div id="div_parar_slide" class="marcado">❚❚</div>
+      <div id="div_passar_slide">►</div>
+      {foreach $itens as $item}
+      {if $item['posicao_no_slide'] == 1}
+      <div class="marcador_do_slide marcado"></div>
+      {else}
+      <div class="marcador_do_slide"></div>
+      {/if}
+      {/foreach}
+    </div>
+  </div>
+  <div id="div_lista_de_subitens">
+    {foreach $itens as $item}
+      {foreach $item['subitens'] as $subitem}
+      {if $item['posicao_no_slide'] == 1}
+      <a class="link_subitem" href="/subitem?id={$subitem['id']}">
+      {else}
+      <a class="link_subitem tag_oculta" href="/subitem?id={$subitem['id']}">
+      {/if}
+        <span class="referencia_do_item_no_slide tag_oculta">{$item['posicao_no_slide']}</span>
+        <h4 class="local_do_titulo_do_subitem">
+          <span class="titulo_do_subitem">{$subitem['titulo']}</span>
+        </h4>
+        <div class="local_da_descricao_do_subitem">
+          <div class="descricao_do_subitem">{$subitem['descricao_reduzida']}</div>
+        </div>
+      </a>
+      {/foreach}
+    {/foreach}
+  </div>
+</div>
+{/block}

@@ -5,7 +5,7 @@
 
 <p>Este sistema inclui:<br/>
 Slide feito com Javascript puro, ou seja sem uso de frameworks para Javascript.<br/>
-Slide feito com jQuery (será implementado em breve).<br/>
+Slide feito com jQuery.<br/>
 Slide feito com React (será implementado em breve).</p>
 
 <p>Este sistema utiliza a framework CodeIgniter e o template engine Smarty, mas pode ser adaptado para outras frameworks.</p>

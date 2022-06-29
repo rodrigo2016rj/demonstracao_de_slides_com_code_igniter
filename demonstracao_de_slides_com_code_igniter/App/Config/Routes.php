@@ -46,6 +46,9 @@ $routes->get('/subitem', 'SubitemController::index');
 /* Slide Javascript Puro */
 $routes->get('/slide_javascript_puro', 'SlideJavascriptPuroController::index');
 
+/* Slide JQuery */
+$routes->get('/slide_jquery', 'SlideJQueryController::index');
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing
