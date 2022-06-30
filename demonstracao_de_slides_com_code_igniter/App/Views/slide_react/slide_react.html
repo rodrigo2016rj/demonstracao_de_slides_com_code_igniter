@@ -1,0 +1,80 @@
+{extends file='../template.html'}
+{block name=head_especifico}
+<link href="/css/{$tema_template}/slide_react.css" type="text/css" rel="stylesheet"/>
+<script src="/script/React Production Min.js"></script>
+<script src="/script/React-Dom Production Min.js"></script>
+<title>Slide React</title>
+{/block}
+{block name=tronco}
+<div id="div_modelos" class="tag_oculta">
+  <div id="div_pagina_slide_react">
+    <h2 id="h2_titulo_slide_react">
+      <span>Slide React</span>
+    </h2>
+    <div id="div_slide_mais_subitens">
+      <div id="div_slide">
+        <div id="div_local_da_seta_para_esquerda">
+          <div id="div_seta_para_esquerda"></div>
+        </div>
+        <div id="div_conteudo_do_slide">
+          {foreach $itens as $item}
+          {if $item['posicao_no_slide'] == 1}
+          <a class="link_item item_aparece" href="/item?id={$item['id']}">
+          {else}
+          <a class="link_item item_some" href="/item?id={$item['id']}">
+          {/if}
+            <span class="numero_do_item_no_slide tag_oculta">{$item['posicao_no_slide']}</span>
+            <h3 class="local_do_titulo_do_item">
+              <span class="titulo_do_item">{$item['titulo']}</span>
+            </h3>
+            <div class="local_da_descricao_do_item">
+              <div class="descricao_do_item">{$item['descricao_reduzida']}</div>
+            </div>
+          </a>
+          {/foreach}
+        </div>
+        <div id="div_local_da_seta_para_direita">
+          <div id="div_seta_para_direita"></div>
+        </div>
+        <div id="div_local_dos_botoes">
+          <div id="div_parar_slide" class="marcado">❚❚</div>
+          <div id="div_passar_slide">►</div>
+          {foreach $itens as $item}
+          {if $item['posicao_no_slide'] == 1}
+          <div class="marcador_do_slide marcado"></div>
+          {else}
+          <div class="marcador_do_slide"></div>
+          {/if}
+          {/foreach}
+        </div>
+      </div>
+      <div id="div_lista_de_subitens">
+        {foreach $itens as $item}
+          {foreach $item['subitens'] as $subitem}
+            {if $item['posicao_no_slide'] == 1}
+              {if $subitem['posicao_na_lista'] == 1}
+                <a class="link_subitem subitem_aparece primeiro_subitem" href="/subitem?id={$subitem['id']}">
+              {else}
+                <a class="link_subitem subitem_aparece" href="/subitem?id={$subitem['id']}">
+              {/if}
+            {else}
+                <a class="link_subitem subitem_some" href="/subitem?id={$subitem['id']}">
+            {/if}
+                  <span class="referencia_do_item_no_slide tag_oculta">{$item['posicao_no_slide']}</span>
+                  <h4 class="local_do_titulo_do_subitem">
+                    <span class="titulo_do_subitem">{$subitem['titulo']}</span>
+                  </h4>
+                  <div class="local_da_descricao_do_subitem">
+                    <div class="descricao_do_subitem">{$subitem['descricao_reduzida']}</div>
+                  </div>
+                </a>
+          {/foreach}
+        {/foreach}
+      </div>
+    </div>
+  </div>
+</div>
+<div id="div_componente_pagina_slide_react">
+  <script src="/script/slide_react/componente_pagina_slide_react.js"></script>
+</div>
+{/block}

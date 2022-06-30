@@ -49,6 +49,9 @@ $routes->get('/slide_javascript_puro', 'SlideJavascriptPuroController::index');
 /* Slide JQuery */
 $routes->get('/slide_jquery', 'SlideJQueryController::index');
 
+/* Slide React */
+$routes->get('/slide_react', 'SlideReactController::index');
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing
