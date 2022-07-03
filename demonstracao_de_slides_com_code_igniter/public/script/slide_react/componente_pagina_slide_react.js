@@ -236,17 +236,6 @@ class ComponentePaginaSlideReact extends React.Component{
   }
 }
 
-class ComponenteTeste extends React.Component{
-  
-  constructor(props){
-    super(props);
-  }
-  
-  render(){
-    return React.createElement("span", null, "Teste");
-  }
-}
-
 const elemento = document.getElementById("div_pagina_slide_react");
 
 ReactDOM.render(
