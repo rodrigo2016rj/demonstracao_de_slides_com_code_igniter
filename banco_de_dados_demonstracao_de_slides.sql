@@ -5,7 +5,7 @@ DROP SCHEMA IF EXISTS banco_de_dados_demonstracao_de_slides;
 
 CREATE SCHEMA IF NOT EXISTS banco_de_dados_demonstracao_de_slides 
 DEFAULT CHARACTER SET utf8mb4 
-COLLATE utf8mb4_general_ci;
+COLLATE utf8mb4_unicode_ci;
 
 USE banco_de_dados_demonstracao_de_slides;
 
