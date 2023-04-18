@@ -41,7 +41,7 @@ class Database extends Config
         'pConnect' => false,
         'DBDebug'  => (ENVIRONMENT !== 'production'),
         'charset'  => 'utf8mb4',
-        'DBCollat' => 'utf8mb4_general_ci',
+        'DBCollat' => 'utf8mb4_unicode_ci',
         'swapPre'  => '',
         'encrypt'  => false,
         'compress' => false,
