@@ -15,6 +15,8 @@ use DateTime;
 
 /**
  * Format validation Rules.
+ *
+ * @see \CodeIgniter\Validation\FormatRulesTest
  */
 class FormatRules
 {
@@ -176,8 +178,6 @@ class FormatRules
      * timezone_identifiers_list function.
      *
      * @see http://php.net/manual/en/datetimezone.listidentifiers.php
-     *
-     * @param string $str
      */
     public function timezone(?string $str = null): bool
     {
@@ -189,8 +189,6 @@ class FormatRules
      *
      * Tests a string for characters outside of the Base64 alphabet
      * as defined by RFC 2045 http://www.faqs.org/rfcs/rfc2045
-     *
-     * @param string $str
      */
     public function valid_base64(?string $str = null): bool
     {
@@ -203,8 +201,6 @@ class FormatRules
 
     /**
      * Valid JSON
-     *
-     * @param string $str
      */
     public function valid_json(?string $str = null): bool
     {
@@ -215,8 +211,6 @@ class FormatRules
 
     /**
      * Checks for a correctly formatted email address
-     *
-     * @param string $str
      */
     public function valid_email(?string $str = null): bool
     {
@@ -233,8 +227,6 @@ class FormatRules
      *
      * Example:
      *     valid_emails[one@example.com,two@example.com]
-     *
-     * @param string $str
      */
     public function valid_emails(?string $str = null): bool
     {
@@ -260,25 +252,25 @@ class FormatRules
      */
     public function valid_ip(?string $ip = null, ?string $which = null): bool
     {
-        if (empty($ip)) {
+        if ($ip === null || $ip === '') {
             return false;
         }
 
         switch (strtolower($which ?? '')) {
             case 'ipv4':
-                $which = FILTER_FLAG_IPV4;
+                $option = FILTER_FLAG_IPV4;
                 break;
 
             case 'ipv6':
-                $which = FILTER_FLAG_IPV6;
+                $option = FILTER_FLAG_IPV6;
                 break;
 
             default:
-                $which = 0;
+                $option = 0;
         }
 
-        return filter_var($ip, FILTER_VALIDATE_IP, $which) !== false
-            || (! ctype_print($ip) && filter_var(inet_ntop($ip), FILTER_VALIDATE_IP, $which) !== false);
+        return filter_var($ip, FILTER_VALIDATE_IP, $option) !== false
+            || (! ctype_print($ip) && filter_var(inet_ntop($ip), FILTER_VALIDATE_IP, $option) !== false);
     }
 
     /**
@@ -289,11 +281,11 @@ class FormatRules
      */
     public function valid_url(?string $str = null): bool
     {
-        if (empty($str)) {
+        if ($str === null || $str === '') {
             return false;
         }
 
-        if (preg_match('/^(?:([^:]*)\:)?\/\/(.+)$/', $str, $matches)) {
+        if (preg_match('/\A(?:([^:]*)\:)?\/\/(.+)\z/', $str, $matches)) {
             if (! in_array($matches[1], ['http', 'https'], true)) {
                 return false;
             }
@@ -313,11 +305,12 @@ class FormatRules
      */
     public function valid_url_strict(?string $str = null, ?string $validSchemes = null): bool
     {
-        if (empty($str)) {
+        if ($str === null || $str === '' || $str === '0') {
             return false;
         }
 
-        $scheme       = strtolower(parse_url($str, PHP_URL_SCHEME) ?? ''); // absent scheme gives null
+        // parse_url() may return null and false
+        $scheme       = strtolower((string) parse_url($str, PHP_URL_SCHEME));
         $validSchemes = explode(
             ',',
             strtolower($validSchemes ?? 'http,https')
@@ -329,16 +322,31 @@ class FormatRules
 
     /**
      * Checks for a valid date and matches a given date format
+     *
+     * @param non-empty-string|null $format
      */
     public function valid_date(?string $str = null, ?string $format = null): bool
     {
-        if (empty($format)) {
+        if ($str === null) {
+            return false;
+        }
+
+        if ($format === null || $format === '') {
             return strtotime($str) !== false;
         }
 
         $date   = DateTime::createFromFormat($format, $str);
         $errors = DateTime::getLastErrors();
 
-        return $date !== false && $errors !== false && $errors['warning_count'] === 0 && $errors['error_count'] === 0;
+        if ($date === false) {
+            return false;
+        }
+
+        // PHP 8.2 or later.
+        if ($errors === false) {
+            return true;
+        }
+
+        return $errors['warning_count'] === 0 && $errors['error_count'] === 0;
     }
 }

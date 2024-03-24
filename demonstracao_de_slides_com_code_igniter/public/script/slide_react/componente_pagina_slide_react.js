@@ -17,6 +17,12 @@ class ComponentePaginaSlideReact extends React.Component{
     props.elemento.remove();
     
     this.mecher_slide_automaticamente();
+    
+    this.impedir_selecao_de_texto_indesejada = this.impedir_selecao_de_texto_indesejada.bind(this);
+    this.ir_para_item_da_esquerda = this.ir_para_item_da_esquerda.bind(this);
+    this.ir_para_item_da_direita = this.ir_para_item_da_direita.bind(this);
+    this.parar_ou_passar_slide = this.parar_ou_passar_slide.bind(this);
+    this.ir_para_item = this.ir_para_item.bind(this);
   }
   
   mecher_slide_automaticamente(){
@@ -72,26 +78,26 @@ class ComponentePaginaSlideReact extends React.Component{
     if(typeof array_atributos["id"] !== "undefined"){
       switch(array_atributos["id"]){
         case "div_local_da_seta_para_esquerda":
-          array_atributos["onClick"] = () => this.ir_para_item_da_esquerda();
-          array_atributos["onMouseDown"] = () => this.impedir_selecao_de_texto_indesejada();
+          array_atributos["onClick"] = this.ir_para_item_da_esquerda;
+          array_atributos["onMouseDown"] = this.impedir_selecao_de_texto_indesejada;
         break;
         case "div_local_da_seta_para_direita":
-          array_atributos["onClick"] = () => this.ir_para_item_da_direita();
-          array_atributos["onMouseDown"] = () => this.impedir_selecao_de_texto_indesejada();
+          array_atributos["onClick"] = this.ir_para_item_da_direita;
+          array_atributos["onMouseDown"] = this.impedir_selecao_de_texto_indesejada;
         break;
         case "div_local_dos_botoes":
-          array_atributos["onMouseDown"] = () => this.impedir_selecao_de_texto_indesejada();
+          array_atributos["onMouseDown"] = this.impedir_selecao_de_texto_indesejada;
         break;
         case "div_parar_slide":
           array_atributos["className"] = this.state.slide_parado ? "marcado" : "";
           if(!this.state.slide_parado){
-            array_atributos["onClick"] = () => this.parar_ou_passar_slide();
+            array_atributos["onClick"] = this.parar_ou_passar_slide;
           }
         break;
         case "div_passar_slide":
           array_atributos["className"] = this.state.slide_parado ? "" : "marcado";
           if(this.state.slide_parado){
-            array_atributos["onClick"] = () => this.parar_ou_passar_slide();
+            array_atributos["onClick"] = this.parar_ou_passar_slide;
           }
         break;
       }
@@ -107,7 +113,7 @@ class ComponentePaginaSlideReact extends React.Component{
         case "marcador_do_slide":
           array_atributos["className"] = this.marcador_esta_ou_nao_marcado(this.numero_do_marcador);
           array_atributos["chave"] = this.numero_do_marcador; //HTML precisa disso.
-          array_atributos["onClick"] = () => this.ir_para_item();
+          array_atributos["onClick"] = this.ir_para_item;
           this.numero_do_marcador++;
         break;
         case "link_subitem subitem_aparece primeiro_subitem":
@@ -144,11 +150,11 @@ class ComponentePaginaSlideReact extends React.Component{
   }
   
   /* Impedindo clique duplo selecionar o texto */
-  impedir_selecao_de_texto_indesejada(){
-    event.preventDefault();
+  impedir_selecao_de_texto_indesejada(evento){
+    evento.preventDefault();
   }
   
-  ir_para_item_da_esquerda(){
+  ir_para_item_da_esquerda(evento){
     this.state.numero_do_item_atual--;
     if(this.state.numero_do_item_atual < 1){
       this.state.numero_do_item_atual = 8;
@@ -164,7 +170,7 @@ class ComponentePaginaSlideReact extends React.Component{
     );
   }
   
-  ir_para_item_da_direita(){
+  ir_para_item_da_direita(evento){
     this.state.numero_do_item_atual++;
     if(this.state.numero_do_item_atual > 8){
       this.state.numero_do_item_atual = 1;
@@ -180,7 +186,7 @@ class ComponentePaginaSlideReact extends React.Component{
     );
   }
   
-  parar_ou_passar_slide(){
+  parar_ou_passar_slide(evento){
     this.state.slide_parado = this.state.slide_parado ? false : true;
     
     /* Chamando o método setState para renderizar o componente novamente. */
@@ -207,8 +213,8 @@ class ComponentePaginaSlideReact extends React.Component{
     return "marcador_do_slide marcado";
   }
   
-  ir_para_item(){
-    const chave = event.target.attributes["chave"].nodeValue;
+  ir_para_item(evento){
+    const chave = evento.target.attributes["chave"].nodeValue;
     
     this.state.numero_do_item_atual = parseInt(chave, 10);
     
@@ -236,13 +242,14 @@ class ComponentePaginaSlideReact extends React.Component{
   }
 }
 
-const elemento = document.getElementById("div_pagina_slide_react");
+const div_pagina_slide_react = document.getElementById("div_pagina_slide_react");
+const div_componente_pagina_slide_react = document.getElementById("div_componente_pagina_slide_react");
 
-ReactDOM.render(
+const root = ReactDOM.createRoot(div_componente_pagina_slide_react);
+root.render(
   React.createElement(
-    React.StrictMode, 
+    React.StrictMode,
     null,
-    React.createElement(ComponentePaginaSlideReact, {elemento: elemento}, null)
-  ),
-  document.getElementById("div_componente_pagina_slide_react")
+    React.createElement(ComponentePaginaSlideReact, {elemento: div_pagina_slide_react}, null)
+  )
 );

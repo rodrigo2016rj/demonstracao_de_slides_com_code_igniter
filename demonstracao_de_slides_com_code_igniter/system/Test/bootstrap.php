@@ -10,11 +10,10 @@
  */
 
 use CodeIgniter\Config\DotEnv;
-use CodeIgniter\Router\RouteCollection;
-use CodeIgniter\Services;
 use Config\Autoload;
 use Config\Modules;
 use Config\Paths;
+use Config\Services;
 
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
@@ -29,9 +28,7 @@ defined('CI_DEBUG') || define('CI_DEBUG', true);
 defined('HOMEPATH') || define('HOMEPATH', realpath(rtrim(getcwd(), '\\/ ')) . DIRECTORY_SEPARATOR);
 $source = is_dir(HOMEPATH . 'app')
     ? HOMEPATH
-    : (is_dir('vendor/codeigniter4/framework/')
-        ? 'vendor/codeigniter4/framework/'
-        : 'vendor/codeigniter4/codeigniter4/');
+    : (is_dir('vendor/codeigniter4/framework/') ? 'vendor/codeigniter4/framework/' : 'vendor/codeigniter4/codeigniter4/');
 defined('CONFIGPATH') || define('CONFIGPATH', realpath($source . 'app/Config') . DIRECTORY_SEPARATOR);
 defined('PUBLICPATH') || define('PUBLICPATH', realpath($source . 'public') . DIRECTORY_SEPARATOR);
 unset($source);
@@ -49,11 +46,11 @@ defined('CIPATH')        || define('CIPATH', realpath(SYSTEMPATH . '../') . DIRE
 defined('FCPATH')        || define('FCPATH', realpath(PUBLICPATH) . DIRECTORY_SEPARATOR);
 defined('TESTPATH')      || define('TESTPATH', realpath(HOMEPATH . 'tests/') . DIRECTORY_SEPARATOR);
 defined('SUPPORTPATH')   || define('SUPPORTPATH', realpath(TESTPATH . '_support/') . DIRECTORY_SEPARATOR);
-defined('COMPOSER_PATH') || define('COMPOSER_PATH', realpath(HOMEPATH . 'vendor/autoload.php'));
+defined('COMPOSER_PATH') || define('COMPOSER_PATH', (string) realpath(HOMEPATH . 'vendor/autoload.php'));
 defined('VENDORPATH')    || define('VENDORPATH', realpath(HOMEPATH . 'vendor') . DIRECTORY_SEPARATOR);
 
 // Load Common.php from App then System
-if (file_exists(APPPATH . 'Common.php')) {
+if (is_file(APPPATH . 'Common.php')) {
     require_once APPPATH . 'Common.php';
 }
 
@@ -76,13 +73,9 @@ require_once SYSTEMPATH . 'Config/BaseService.php';
 require_once SYSTEMPATH . 'Config/Services.php';
 require_once APPPATH . 'Config/Services.php';
 
-// Use Config\Services as CodeIgniter\Services
-if (! class_exists('CodeIgniter\Services', false)) {
-    class_alias('Config\Services', 'CodeIgniter\Services');
-}
-
 // Initialize and register the loader with the SPL autoloader stack.
 Services::autoloader()->initialize(new Autoload(), new Modules())->register();
+Services::autoloader()->loadHelpers();
 
 // Now load Composer's if it's available
 if (is_file(COMPOSER_PATH)) {
@@ -95,12 +88,4 @@ require_once SYSTEMPATH . 'Config/DotEnv.php';
 $env = new DotEnv(ROOTPATH);
 $env->load();
 
-// Always load the URL helper, it should be used in most of apps.
-helper('url');
-
-require_once APPPATH . 'Config/Routes.php';
-
-/**
- * @var RouteCollection $routes
- */
-$routes->getRoutes('*');
+Services::routes()->loadRoutes();

@@ -128,110 +128,135 @@ class Forge extends BaseForge
     /**
      * ALTER TABLE
      *
-     * @param string $alterType ALTER type
-     * @param string $table     Table name
-     * @param mixed  $field     Column definition
+     * @param string       $alterType       ALTER type
+     * @param string       $table           Table name
+     * @param array|string $processedFields Processed column definitions
+     *                                      or column names to DROP
      *
-     * @return string|string[]
+     * @return         list<string>|string                            SQL string
+     * @phpstan-return ($alterType is 'DROP' ? string : list<string>)
      */
-    protected function _alterTable(string $alterType, string $table, $field)
+    protected function _alterTable(string $alterType, string $table, $processedFields)
     {
         if ($alterType === 'DROP') {
-            return parent::_alterTable($alterType, $table, $field);
+            return parent::_alterTable($alterType, $table, $processedFields);
         }
 
         $sql = 'ALTER TABLE ' . $this->db->escapeIdentifiers($table);
 
-        foreach ($field as $i => $data) {
-            if ($data['_literal'] !== false) {
-                $field[$i] = ($alterType === 'ADD') ? "\n\tADD " . $data['_literal'] : "\n\tMODIFY " . $data['_literal'];
+        foreach ($processedFields as $i => $field) {
+            if ($field['_literal'] !== false) {
+                $processedFields[$i] = ($alterType === 'ADD') ? "\n\tADD " . $field['_literal'] : "\n\tMODIFY " . $field['_literal'];
             } else {
                 if ($alterType === 'ADD') {
-                    $field[$i]['_literal'] = "\n\tADD ";
+                    $processedFields[$i]['_literal'] = "\n\tADD ";
                 } else {
-                    $field[$i]['_literal'] = empty($data['new_name']) ? "\n\tMODIFY " : "\n\tCHANGE ";
+                    $processedFields[$i]['_literal'] = empty($field['new_name']) ? "\n\tMODIFY " : "\n\tCHANGE ";
                 }
 
-                $field[$i] = $field[$i]['_literal'] . $this->_processColumn($field[$i]);
+                $processedFields[$i] = $processedFields[$i]['_literal'] . $this->_processColumn($processedFields[$i]);
             }
         }
 
-        return [$sql . implode(',', $field)];
+        return [$sql . implode(',', $processedFields)];
     }
 
     /**
      * Process column
      */
-    protected function _processColumn(array $field): string
+    protected function _processColumn(array $processedField): string
     {
-        $extraClause = isset($field['after']) ? ' AFTER ' . $this->db->escapeIdentifiers($field['after']) : '';
+        $extraClause = isset($processedField['after']) ? ' AFTER ' . $this->db->escapeIdentifiers($processedField['after']) : '';
 
-        if (empty($extraClause) && isset($field['first']) && $field['first'] === true) {
+        if (empty($extraClause) && isset($processedField['first']) && $processedField['first'] === true) {
             $extraClause = ' FIRST';
         }
 
-        return $this->db->escapeIdentifiers($field['name'])
-                . (empty($field['new_name']) ? '' : ' ' . $this->db->escapeIdentifiers($field['new_name']))
-                . ' ' . $field['type'] . $field['length']
-                . $field['unsigned']
-                . $field['null']
-                . $field['default']
-                . $field['auto_increment']
-                . $field['unique']
-                . (empty($field['comment']) ? '' : ' COMMENT ' . $field['comment'])
+        return $this->db->escapeIdentifiers($processedField['name'])
+                . (empty($processedField['new_name']) ? '' : ' ' . $this->db->escapeIdentifiers($processedField['new_name']))
+                . ' ' . $processedField['type'] . $processedField['length']
+                . $processedField['unsigned']
+                . $processedField['null']
+                . $processedField['default']
+                . $processedField['auto_increment']
+                . $processedField['unique']
+                . (empty($processedField['comment']) ? '' : ' COMMENT ' . $processedField['comment'])
                 . $extraClause;
     }
 
     /**
-     * Process indexes
+     * Generates SQL to add indexes
      *
-     * @param string $table (ignored)
+     * @param bool $asQuery When true returns stand alone SQL, else partial SQL used with CREATE TABLE
      */
-    protected function _processIndexes(string $table): string
+    protected function _processIndexes(string $table, bool $asQuery = false): array
     {
-        $sql = '';
+        $sqls  = [''];
+        $index = 0;
 
         for ($i = 0, $c = count($this->keys); $i < $c; $i++) {
-            if (is_array($this->keys[$i])) {
-                for ($i2 = 0, $c2 = count($this->keys[$i]); $i2 < $c2; $i2++) {
-                    if (! isset($this->fields[$this->keys[$i][$i2]])) {
-                        unset($this->keys[$i][$i2]);
+            $index = $i;
+            if ($asQuery === false) {
+                $index = 0;
+            }
+
+            if (isset($this->keys[$i]['fields'])) {
+                for ($i2 = 0, $c2 = count($this->keys[$i]['fields']); $i2 < $c2; $i2++) {
+                    if (! isset($this->fields[$this->keys[$i]['fields'][$i2]])) {
+                        unset($this->keys[$i]['fields'][$i2]);
 
                         continue;
                     }
                 }
-            } elseif (! isset($this->fields[$this->keys[$i]])) {
-                unset($this->keys[$i]);
-
-                continue;
             }
 
-            if (! is_array($this->keys[$i])) {
-                $this->keys[$i] = [$this->keys[$i]];
+            if (! is_array($this->keys[$i]['fields'])) {
+                $this->keys[$i]['fields'] = [$this->keys[$i]['fields']];
             }
 
             $unique = in_array($i, $this->uniqueKeys, true) ? 'UNIQUE ' : '';
 
-            $sql .= ",\n\t{$unique}KEY " . $this->db->escapeIdentifiers(implode('_', $this->keys[$i]))
-                . ' (' . implode(', ', $this->db->escapeIdentifiers($this->keys[$i])) . ')';
+            $keyName = $this->db->escapeIdentifiers(($this->keys[$i]['keyName'] === '') ?
+                implode('_', $this->keys[$i]['fields']) :
+                $this->keys[$i]['keyName']);
+
+            if ($asQuery === true) {
+                $sqls[$index] = 'ALTER TABLE ' . $this->db->escapeIdentifiers($table) . " ADD {$unique}KEY "
+                    . $keyName
+                    . ' (' . implode(', ', $this->db->escapeIdentifiers($this->keys[$i]['fields'])) . ')';
+            } else {
+                $sqls[$index] .= ",\n\t{$unique}KEY " . $keyName
+                . ' (' . implode(', ', $this->db->escapeIdentifiers($this->keys[$i]['fields'])) . ')';
+            }
         }
 
         $this->keys = [];
 
-        return $sql;
+        return $sqls;
     }
 
     /**
      * Drop Key
-     *
-     * @return bool
      */
-    public function dropKey(string $table, string $keyName)
+    public function dropKey(string $table, string $keyName, bool $prefixKeyName = true): bool
     {
         $sql = sprintf(
             $this->dropIndexStr,
             $this->db->escapeIdentifiers($keyName),
             $this->db->escapeIdentifiers($this->db->DBPrefix . $table),
+        );
+
+        return $this->db->query($sql);
+    }
+
+    /**
+     * Drop Primary Key
+     */
+    public function dropPrimaryKey(string $table, string $keyName = ''): bool
+    {
+        $sql = sprintf(
+            'ALTER TABLE %s DROP PRIMARY KEY',
+            $this->db->escapeIdentifiers($this->db->DBPrefix . $table)
         );
 
         return $this->db->query($sql);

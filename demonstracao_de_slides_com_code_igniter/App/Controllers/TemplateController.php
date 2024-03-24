@@ -2,16 +2,18 @@
 
 namespace App\Controllers;
 
-use Smarty;
 use CodeIgniter\Controller;
+use CodeIgniter\HTTP\RequestInterface;
+use CodeIgniter\HTTP\ResponseInterface;
+use Psr\Log\LoggerInterface;
+use Smarty;
 
 class TemplateController extends Controller{
   //Armazena objeto do smarty.
   private $smarty;
 
-  public function initController(\CodeIgniter\HTTP\RequestInterface $requisicao,
-    \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger){
-    parent::initController($requisicao, $response, $logger);
+  public function initController(RequestInterface $requisicao, ResponseInterface $resposta, LoggerInterface $logger){
+    parent::initController($requisicao, $resposta, $logger);
 
     $this->smarty = new Smarty;
 

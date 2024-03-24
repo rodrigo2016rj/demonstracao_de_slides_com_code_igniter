@@ -12,7 +12,9 @@
 namespace CodeIgniter\Test;
 
 use CodeIgniter\Exceptions\FrameworkException;
+use CodeIgniter\I18n\Time;
 use CodeIgniter\Model;
+use Config\App;
 use Faker\Factory;
 use Faker\Generator;
 use InvalidArgumentException;
@@ -23,6 +25,8 @@ use RuntimeException;
  *
  * Bridge class for using Faker to create example data based on
  * model specifications.
+ *
+ * @see \CodeIgniter\Test\FabricatorTest
  */
 class Fabricator
 {
@@ -113,7 +117,7 @@ class Fabricator
 
         // If no locale was specified then use the App default
         if ($locale === null) {
-            $locale = config('App')->defaultLocale;
+            $locale = config(App::class)->defaultLocale;
         }
 
         // There is no easy way to retrieve the locale from Faker so we will store it
@@ -124,7 +128,7 @@ class Fabricator
 
         // Determine eligible date fields
         foreach (['createdField', 'updatedField', 'deletedField'] as $field) {
-            if (! empty($this->model->{$field})) {
+            if (isset($this->model->{$field})) {
                 $this->dateFields[] = $this->model->{$field};
             }
         }
@@ -148,7 +152,7 @@ class Fabricator
      */
     public static function getCount(string $table): int
     {
-        return empty(self::$tableCounts[$table]) ? 0 : self::$tableCounts[$table];
+        return ! isset(self::$tableCounts[$table]) ? 0 : self::$tableCounts[$table];
     }
 
     /**
@@ -278,7 +282,7 @@ class Fabricator
     {
         $this->formatters = [];
 
-        if (! empty($this->model->allowedFields)) {
+        if (isset($this->model->allowedFields)) {
             foreach ($this->model->allowedFields as $field) {
                 $this->formatters[$field] = $this->guessFormatter($field);
             }
@@ -364,9 +368,9 @@ class Fabricator
     /**
      * Generate an array of faked data
      *
-     * @throws RuntimeException
-     *
      * @return array An array of faked data
+     *
+     * @throws RuntimeException
      */
     public function makeArray()
     {
@@ -374,7 +378,7 @@ class Fabricator
             $result = [];
 
             foreach ($this->formatters as $field => $formatter) {
-                $result[$field] = $this->faker->{$formatter};
+                $result[$field] = $this->faker->{$formatter}();
             }
         }
         // If no formatters were defined then look for a model fake() method
@@ -401,9 +405,9 @@ class Fabricator
      *
      * @param string|null $className Class name of the object to create; null to use model default
      *
-     * @throws RuntimeException
-     *
      * @return object An instance of the class with faked data
+     *
+     * @throws RuntimeException
      */
     public function makeObject(?string $className = null): object
     {
@@ -451,9 +455,9 @@ class Fabricator
      * @param int|null $count Optional number to create a collection
      * @param bool     $mock  Whether to execute or mock the insertion
      *
-     * @throws FrameworkException
-     *
      * @return array|object An array or object (based on returnType), or an array of returnTypes
+     *
+     * @throws FrameworkException
      */
     public function create(?int $count = null, bool $mock = false)
     {
@@ -503,18 +507,18 @@ class Fabricator
                 break;
 
             default:
-                $datetime = time();
+                $datetime = Time::now()->getTimestamp();
         }
 
         // Determine which fields we will need
         $fields = [];
 
-        if (! empty($this->model->useTimestamps)) {
+        if ($this->model->useTimestamps) {
             $fields[$this->model->createdField] = $datetime;
             $fields[$this->model->updatedField] = $datetime;
         }
 
-        if (! empty($this->model->useSoftDeletes)) {
+        if ($this->model->useSoftDeletes) {
             $fields[$this->model->deletedField] = null;
         }
 

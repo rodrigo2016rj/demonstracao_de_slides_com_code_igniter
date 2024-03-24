@@ -42,9 +42,9 @@ trait DatabaseTestTrait
      */
     private static $doneSeed = false;
 
-    //--------------------------------------------------------------------
+    // --------------------------------------------------------------------
     // Staging
-    //--------------------------------------------------------------------
+    // --------------------------------------------------------------------
 
     /**
      * Runs the trait set up methods.
@@ -79,7 +79,7 @@ trait DatabaseTestTrait
             $config          = new Migrations();
             $config->enabled = true;
 
-            $this->migrations = Services::migrations($config, $this->db);
+            $this->migrations = Services::migrations($config, $this->db, false);
             $this->migrations->setSilent(false);
         }
 
@@ -89,9 +89,9 @@ trait DatabaseTestTrait
         }
     }
 
-    //--------------------------------------------------------------------
+    // --------------------------------------------------------------------
     // Migrations
-    //--------------------------------------------------------------------
+    // --------------------------------------------------------------------
 
     /**
      * Migrate on setUp
@@ -120,7 +120,7 @@ trait DatabaseTestTrait
         }
 
         // If no namespace was specified then rollback all
-        if (empty($this->namespace)) {
+        if ($this->namespace === null) {
             $this->migrations->setNamespace(null);
             $this->migrations->regress(0, 'tests');
         }
@@ -146,7 +146,7 @@ trait DatabaseTestTrait
         }
 
         // If no namespace was specified then migrate all
-        if (empty($this->namespace)) {
+        if ($this->namespace === null) {
             $this->migrations->setNamespace(null);
             $this->migrations->latest('tests');
             self::$doneMigration = true;
@@ -163,9 +163,9 @@ trait DatabaseTestTrait
         }
     }
 
-    //--------------------------------------------------------------------
+    // --------------------------------------------------------------------
     // Seeds
-    //--------------------------------------------------------------------
+    // --------------------------------------------------------------------
 
     /**
      * Seed on setUp
@@ -182,8 +182,8 @@ trait DatabaseTestTrait
      */
     protected function runSeeds()
     {
-        if (! empty($this->seed)) {
-            if (! empty($this->basePath)) {
+        if ($this->seed !== '') {
+            if ($this->basePath !== '') {
                 $this->seeder->setPath(rtrim($this->basePath, '/') . '/Seeds');
             }
 
@@ -205,9 +205,9 @@ trait DatabaseTestTrait
         $this->seeder->call($name);
     }
 
-    //--------------------------------------------------------------------
+    // --------------------------------------------------------------------
     // Utility
-    //--------------------------------------------------------------------
+    // --------------------------------------------------------------------
 
     /**
      * Reset $doneMigration and $doneSeed
@@ -248,9 +248,9 @@ trait DatabaseTestTrait
      * Fetches a single column from a database row with criteria
      * matching $where.
      *
-     * @throws DatabaseException
-     *
      * @return bool
+     *
+     * @throws DatabaseException
      */
     public function grabFromDatabase(string $table, string $column, array $where)
     {
@@ -264,9 +264,9 @@ trait DatabaseTestTrait
         return $query->{$column} ?? false;
     }
 
-    //--------------------------------------------------------------------
+    // --------------------------------------------------------------------
     // Assertions
-    //--------------------------------------------------------------------
+    // --------------------------------------------------------------------
 
     /**
      * Asserts that records that match the conditions in $where DO
@@ -322,5 +322,23 @@ trait DatabaseTestTrait
             ->countAllResults();
 
         $this->assertEquals($expected, $count, 'Wrong number of matching rows in database.');
+    }
+
+    /**
+     * Sets $DBDebug to false.
+     *
+     * WARNING: this value will persist! take care to roll it back.
+     */
+    protected function disableDBDebug(): void
+    {
+        $this->setPrivateProperty($this->db, 'DBDebug', false);
+    }
+
+    /**
+     * Sets $DBDebug to true.
+     */
+    protected function enableDBDebug(): void
+    {
+        $this->setPrivateProperty($this->db, 'DBDebug', true);
     }
 }

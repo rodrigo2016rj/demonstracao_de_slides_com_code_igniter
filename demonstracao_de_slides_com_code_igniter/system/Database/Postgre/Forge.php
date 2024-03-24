@@ -66,6 +66,11 @@ class Forge extends BaseForge
     protected $null = 'NULL';
 
     /**
+     * @var Connection
+     */
+    protected $db;
+
+    /**
      * CREATE TABLE attributes
      *
      * @param array $attributes Associative array of table attributes
@@ -76,48 +81,52 @@ class Forge extends BaseForge
     }
 
     /**
-     * @param mixed $field
+     * @param array|string $processedFields Processed column definitions
+     *                                      or column names to DROP
      *
-     * @return array|bool|string
+     * @return         false|list<string>|string                            SQL string or false
+     * @phpstan-return ($alterType is 'DROP' ? string : list<string>|false)
      */
-    protected function _alterTable(string $alterType, string $table, $field)
+    protected function _alterTable(string $alterType, string $table, $processedFields)
     {
         if (in_array($alterType, ['DROP', 'ADD'], true)) {
-            return parent::_alterTable($alterType, $table, $field);
+            return parent::_alterTable($alterType, $table, $processedFields);
         }
 
         $sql  = 'ALTER TABLE ' . $this->db->escapeIdentifiers($table);
         $sqls = [];
 
-        foreach ($field as $data) {
-            if ($data['_literal'] !== false) {
+        foreach ($processedFields as $field) {
+            if ($field['_literal'] !== false) {
                 return false;
             }
 
-            if (version_compare($this->db->getVersion(), '8', '>=') && isset($data['type'])) {
-                $sqls[] = $sql . ' ALTER COLUMN ' . $this->db->escapeIdentifiers($data['name'])
-                    . " TYPE {$data['type']}{$data['length']}";
+            if (version_compare($this->db->getVersion(), '8', '>=') && isset($field['type'])) {
+                $sqls[] = $sql . ' ALTER COLUMN ' . $this->db->escapeIdentifiers($field['name'])
+                    . " TYPE {$field['type']}{$field['length']}";
             }
 
-            if (! empty($data['default'])) {
-                $sqls[] = $sql . ' ALTER COLUMN ' . $this->db->escapeIdentifiers($data['name'])
-                    . " SET DEFAULT {$data['default']}";
+            if (! empty($field['default'])) {
+                $sqls[] = $sql . ' ALTER COLUMN ' . $this->db->escapeIdentifiers($field['name'])
+                    . " SET DEFAULT {$field['default']}";
             }
 
-            if (isset($data['null'])) {
-                $sqls[] = $sql . ' ALTER COLUMN ' . $this->db->escapeIdentifiers($data['name'])
-                    . ($data['null'] === true ? ' DROP' : ' SET') . ' NOT NULL';
+            $nullable = true; // Nullable by default.
+            if (isset($field['null']) && ($field['null'] === false || $field['null'] === ' NOT ' . $this->null)) {
+                $nullable = false;
+            }
+            $sqls[] = $sql . ' ALTER COLUMN ' . $this->db->escapeIdentifiers($field['name'])
+                . ($nullable === true ? ' DROP' : ' SET') . ' NOT NULL';
+
+            if (! empty($field['new_name'])) {
+                $sqls[] = $sql . ' RENAME COLUMN ' . $this->db->escapeIdentifiers($field['name'])
+                    . ' TO ' . $this->db->escapeIdentifiers($field['new_name']);
             }
 
-            if (! empty($data['new_name'])) {
-                $sqls[] = $sql . ' RENAME COLUMN ' . $this->db->escapeIdentifiers($data['name'])
-                    . ' TO ' . $this->db->escapeIdentifiers($data['new_name']);
-            }
-
-            if (! empty($data['comment'])) {
+            if (! empty($field['comment'])) {
                 $sqls[] = 'COMMENT ON COLUMN' . $this->db->escapeIdentifiers($table)
-                    . '.' . $this->db->escapeIdentifiers($data['name'])
-                    . " IS {$data['comment']}";
+                    . '.' . $this->db->escapeIdentifiers($field['name'])
+                    . " IS {$field['comment']}";
             }
         }
 
@@ -127,14 +136,14 @@ class Forge extends BaseForge
     /**
      * Process column
      */
-    protected function _processColumn(array $field): string
+    protected function _processColumn(array $processedField): string
     {
-        return $this->db->escapeIdentifiers($field['name'])
-            . ' ' . $field['type'] . $field['length']
-            . $field['default']
-            . $field['null']
-            . $field['auto_increment']
-            . $field['unique'];
+        return $this->db->escapeIdentifiers($processedField['name'])
+            . ' ' . $processedField['type'] . ($processedField['type'] === 'text' ? '' : $processedField['length'])
+            . $processedField['default']
+            . $processedField['null']
+            . $processedField['auto_increment']
+            . $processedField['unique'];
     }
 
     /**
@@ -189,5 +198,21 @@ class Forge extends BaseForge
         }
 
         return $sql;
+    }
+
+    /**
+     * Constructs sql to check if key is a constraint.
+     */
+    protected function _dropKeyAsConstraint(string $table, string $constraintName): string
+    {
+        return "SELECT con.conname
+               FROM pg_catalog.pg_constraint con
+                INNER JOIN pg_catalog.pg_class rel
+                           ON rel.oid = con.conrelid
+                INNER JOIN pg_catalog.pg_namespace nsp
+                           ON nsp.oid = connamespace
+               WHERE nsp.nspname = '{$this->db->schema}'
+                     AND rel.relname = '" . trim($table, '"') . "'
+                     AND con.conname = '" . trim($constraintName, '"') . "'";
     }
 }

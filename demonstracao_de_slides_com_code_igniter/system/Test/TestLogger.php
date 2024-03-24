@@ -13,15 +13,21 @@ namespace CodeIgniter\Test;
 
 use CodeIgniter\Log\Logger;
 
+/**
+ * @see \CodeIgniter\Test\TestLoggerTest
+ */
 class TestLogger extends Logger
 {
+    /**
+     * @var list<array{level: mixed, message: string, file: string|null}>
+     */
     protected static $op_logs = [];
 
     /**
      * The log method is overridden so that we can store log history during
      * the tests to allow us to check ->assertLogged() methods.
      *
-     * @param string $level
+     * @param mixed  $level
      * @param string $message
      */
     public function log($level, $message, array $context = []): bool
@@ -59,10 +65,24 @@ class TestLogger extends Logger
      *
      * @return bool
      */
-    public static function didLog(string $level, $message)
+    public static function didLog(string $level, $message, bool $useExactComparison = true)
     {
+        $lowerLevel = strtolower($level);
+
         foreach (self::$op_logs as $log) {
-            if (strtolower($log['level']) === strtolower($level) && $message === $log['message']) {
+            if (strtolower($log['level']) !== $lowerLevel) {
+                continue;
+            }
+
+            if ($useExactComparison) {
+                if ($log['message'] === $message) {
+                    return true;
+                }
+
+                continue;
+            }
+
+            if (strpos($log['message'], $message) !== false) {
                 return true;
             }
         }
@@ -70,9 +90,17 @@ class TestLogger extends Logger
         return false;
     }
 
-    // Expose cleanFileNames()
+    /**
+     * Expose filenames.
+     *
+     * @param string $file
+     *
+     * @return string
+     *
+     * @deprecated No longer needed as underlying protected method is also deprecated.
+     */
     public function cleanup($file)
     {
-        return $this->cleanFileNames($file);
+        return clean_path($file);
     }
 }

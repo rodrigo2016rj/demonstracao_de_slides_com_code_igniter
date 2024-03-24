@@ -18,6 +18,8 @@ use Config\Cache;
 
 /**
  * A factory for loading the desired
+ *
+ * @see \CodeIgniter\Cache\CacheFactoryTest
  */
 class CacheFactory
 {
@@ -38,11 +40,14 @@ class CacheFactory
     /**
      * Attempts to create the desired cache handler, based upon the
      *
+     * @param non-empty-string|null $handler
+     * @param non-empty-string|null $backup
+     *
      * @return CacheInterface
      */
     public static function getHandler(Cache $config, ?string $handler = null, ?string $backup = null)
     {
-        if (! isset($config->validHandlers) || ! is_array($config->validHandlers)) {
+        if (! isset($config->validHandlers) || $config->validHandlers === []) {
             throw CacheException::forInvalidHandlers();
         }
 
@@ -50,8 +55,8 @@ class CacheFactory
             throw CacheException::forNoBackup();
         }
 
-        $handler = ! empty($handler) ? $handler : $config->handler;
-        $backup  = ! empty($backup) ? $backup : $config->backupHandler;
+        $handler ??= $config->handler;
+        $backup ??= $config->backupHandler;
 
         if (! array_key_exists($handler, $config->validHandlers) || ! array_key_exists($backup, $config->validHandlers)) {
             throw CacheException::forHandlerNotFound();
@@ -73,7 +78,7 @@ class CacheFactory
         try {
             $adapter->initialize();
         } catch (CriticalError $e) {
-            log_message('critical', $e->getMessage() . ' Resorting to using ' . $backup . ' handler.');
+            log_message('critical', $e . ' Resorting to using ' . $backup . ' handler.');
 
             // get the next best cache handler (or dummy if the $backup also fails)
             $adapter = self::getHandler($config, $backup, 'dummy');

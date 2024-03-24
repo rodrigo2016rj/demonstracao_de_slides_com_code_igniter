@@ -11,6 +11,7 @@
 
 namespace CodeIgniter\Filters;
 
+use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\Security\Exceptions\SecurityException;
@@ -22,6 +23,8 @@ use CodeIgniter\Security\Exceptions\SecurityException;
  * invalid characters:
  *   - invalid UTF-8 characters
  *   - control characters except line break and tab code
+ *
+ * @see \CodeIgniter\Filters\InvalidCharsTest
  */
 class InvalidChars implements FilterInterface
 {
@@ -48,7 +51,7 @@ class InvalidChars implements FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        if ($request->isCLI()) {
+        if (! $request instanceof IncomingRequest) {
             return;
         }
 
