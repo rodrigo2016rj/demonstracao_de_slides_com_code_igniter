@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\Models\SlideJqueryModel;
 
-final class SlideJqueryController extends TemplateController{
+final class SlideJQueryController extends TemplateController{
 
   public function index(){
     $this->mostrar_itens();
